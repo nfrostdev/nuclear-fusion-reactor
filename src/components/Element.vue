@@ -10,6 +10,16 @@
       <span>{{ weight }}</span>
       <font-awesome-icon class="icon" icon="weight-hanging" />
     </div>
+
+    <div
+      class="element--generate"
+      :class="{ active: generating }"
+      :title="(generating ? 'Stop' : 'Start') + ' the ' + name + ' Generator'"
+      @click="toggleGenerator"
+    >
+      <font-awesome-icon v-if="generating" icon="ban" />
+      <font-awesome-icon v-else icon="bolt" />
+    </div>
   </div>
 </template>
 
@@ -27,7 +37,7 @@ export default Vue.extend({
   data() {
     return {
       count: 0,
-      generating: true,
+      generating: false,
       converting: false,
       elementInterval: 0
     }
@@ -39,12 +49,27 @@ export default Vue.extend({
       }
     }
   },
-  mounted() {
-    this.elementInterval = setInterval(() => {
-      if (this.generating) {
+  methods: {
+    toggleGenerator() {
+      this.generating = !this.generating
+      this.generating ? this.enableGenerator() : this.disableGenerator()
+    },
+    enableGenerator() {
+      this.elementInterval = setInterval(() => {
         this.count++
-      }
-    }, 1000)
+      }, 1000)
+    },
+    disableGenerator() {
+      clearInterval(this.elementInterval)
+    }
+  },
+  mounted() {
+    if (this.generating) {
+      this.enableGenerator()
+    }
+  },
+  beforeDestroy() {
+    this.disableGenerator()
   }
 })
 </script>
@@ -60,8 +85,8 @@ export default Vue.extend({
   color: darken(#cfc0bd, 50%);
   background-color: white;
   text-align: center;
-  border-radius: 0.25rem;
   margin: 1rem;
+  border-radius: 0.25rem;
   border: 0.0625rem solid rgba(0, 0, 0, 0.25);
   box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
 
@@ -107,6 +132,26 @@ export default Vue.extend({
       right: -0.75rem;
       margin-left: 0.125rem;
       font-size: 50%;
+    }
+  }
+
+  &--generate {
+    font-size: 75%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 0.25rem;
+    border: 0.0625rem solid rgba(0, 0, 0, 0.25);
+    box-shadow: 0 0.0625rem 0.25rem rgba(0, 0, 0, 0.1);
+
+    &.active {
+      color: red;
     }
   }
 }

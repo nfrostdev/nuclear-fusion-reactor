@@ -4,10 +4,14 @@ import './registerServiceWorker'
 import store from './store'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faWeightHanging } from '@fortawesome/free-solid-svg-icons'
+import {
+  faWeightHanging,
+  faBolt,
+  faBan
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-library.add(faWeightHanging)
+library.add(faWeightHanging, faBolt, faBan)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.config.productionTip = false
