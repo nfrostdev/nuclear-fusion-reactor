@@ -12,13 +12,21 @@
     </div>
 
     <div
-      class="element--generate"
+      class="element--generate element--action"
       :class="{ active: generating }"
       :title="(generating ? 'Stop' : 'Start') + ' the ' + name + ' Generator'"
       @click="toggleGenerator"
     >
       <font-awesome-icon v-if="generating" icon="ban" />
       <font-awesome-icon v-else icon="bolt" />
+    </div>
+
+    <div
+      class="element--sell element--action"
+      :title="'Sell ' + count + ' ' + name"
+      @click="sellElement"
+    >
+      <font-awesome-icon icon="dollar-sign" />
     </div>
   </div>
 </template>
@@ -57,10 +65,14 @@ export default Vue.extend({
     enableGenerator() {
       this.elementInterval = setInterval(() => {
         this.count++
-      }, 1000)
+      }, this.number * this.weight * 100)
     },
     disableGenerator() {
       clearInterval(this.elementInterval)
+    },
+    sellElement() {
+      this.$store.commit('addMoney', this.number * this.weight * this.count)
+      this.count = 0
     }
   },
   mounted() {
@@ -135,24 +147,33 @@ export default Vue.extend({
     }
   }
 
-  &--generate {
+  &--action {
     font-size: 75%;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: white;
-    right: 0.5rem;
-    bottom: 0.5rem;
+
     width: 1.5rem;
     height: 1.5rem;
     border-radius: 0.25rem;
     border: 0.0625rem solid rgba(0, 0, 0, 0.25);
     box-shadow: 0 0.0625rem 0.25rem rgba(0, 0, 0, 0.1);
+  }
+
+  &--generate {
+    right: 0.5rem;
+    bottom: 0.5rem;
 
     &.active {
       color: red;
     }
+  }
+
+  &--sell {
+    left: 0.5rem;
+    bottom: 0.5rem;
   }
 }
 </style>

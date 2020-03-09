@@ -2,6 +2,7 @@
   <header class="header">
     <h1>Nuclear Fusion Reactor</h1>
     <div class="header--description">A game about elements.</div>
+    <div class="player--money">{{ $store.getters.money }}</div>
   </header>
 </template>
 
@@ -26,5 +27,12 @@ export default Vue.extend({})
 h1 {
   font-size: 175%;
   font-weight: 400;
+}
+
+.player {
+  &--money {
+    margin-top: 2rem;
+    font-size: 150%;
+  }
 }
 </style>
