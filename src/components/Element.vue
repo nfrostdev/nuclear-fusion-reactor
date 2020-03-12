@@ -1,40 +1,47 @@
 <template>
-  <div class="element" :style="styling">
-    <div class="element--number" title="Atomic Number">{{ number }}</div>
-    <div class="element--count" :title="'Total ' + name + ' Available'">
-      {{ count }}
-    </div>
-    <div class="element--symbol" title="Atomic Symbol">{{ symbol }}</div>
-    <div class="element--name" title="Atomic Name">{{ name }}</div>
-    <div class="element--weight" title="Atomic Weight">
-      <span>{{ weight }}</span>
-      <font-awesome-icon class="icon" icon="weight-hanging" />
-    </div>
+  <div class="element--container">
+    <div class="element" :style="styling">
+      <div class="element--number" title="Atomic Number">{{ number }}</div>
+      <div class="element--count" :title="'Total ' + name + ' Available'">
+        {{ count }}
+      </div>
+      <div class="element--symbol" title="Atomic Symbol">{{ symbol }}</div>
+      <div class="element--name" title="Atomic Name">{{ name }}</div>
+      <div class="element--weight" title="Atomic Weight">
+        <span>{{ weight }}</span>
+        <font-awesome-icon class="icon" icon="weight-hanging" />
+      </div>
 
-    <div
-      class="element--generate element--action"
-      :class="{ active: generating }"
-      :title="(generating ? 'Stop' : 'Start') + ' the ' + name + ' Generator'"
-      @click="toggleGenerator"
-    >
-      <font-awesome-icon v-if="generating" icon="ban" />
-      <font-awesome-icon v-else icon="bolt" />
-    </div>
+      <div
+        class="element--generate element--action"
+        :class="{ active: generating }"
+        :title="(generating ? 'Stop' : 'Start') + ' the ' + name + ' Generator'"
+        @click="toggleGenerator"
+      >
+        <font-awesome-icon v-if="generating" icon="ban" />
+        <font-awesome-icon v-else icon="bolt" />
+      </div>
 
-    <div
-      class="element--sell element--action"
-      :title="'Sell ' + count + ' ' + name"
-      @click="sellElement"
-    >
-      <font-awesome-icon icon="dollar-sign" />
+      <div
+        class="element--sell element--action"
+        :title="'Sell ' + count + ' ' + name"
+        @click="sellElement"
+      >
+        <font-awesome-icon icon="dollar-sign" />
+      </div>
     </div>
+    <element-generator-progress :percent="generatorPercent" />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import ElementGeneratorProgress from './ElementGeneratorProgress.vue'
 
 export default Vue.extend({
+  components: {
+    ElementGeneratorProgress
+  },
   props: {
     number: Number,
     symbol: String,
@@ -47,7 +54,9 @@ export default Vue.extend({
       count: 0,
       generating: false,
       converting: false,
-      elementInterval: 0
+      generatorInterval: 0,
+      generatorPercent: 0,
+      generatorPercentInterval: 0
     }
   },
   computed: {
@@ -63,12 +72,26 @@ export default Vue.extend({
       this.generating ? this.enableGenerator() : this.disableGenerator()
     },
     enableGenerator() {
-      this.elementInterval = setInterval(() => {
+      const generationTime = this.number * this.weight * 100
+
+      this.generatorInterval = setInterval(() => {
         this.count++
-      }, this.number * this.weight * 100)
+      }, generationTime)
+
+      if (generationTime / 100 > 1) {
+        this.generatorPercentInterval = setInterval(() => {
+          this.generatorPercent + 1 >= 100
+            ? (this.generatorPercent = 0)
+            : (this.generatorPercent += 1)
+        }, generationTime / 100)
+      } else {
+        this.generatorPercent = 100
+      }
     },
     disableGenerator() {
-      clearInterval(this.elementInterval)
+      clearInterval(this.generatorInterval)
+      clearInterval(this.generatorPercentInterval)
+      this.generatorPercent = 0
     },
     sellElement() {
       this.$store.commit('addMoney', this.number * this.weight * this.count)
@@ -97,10 +120,17 @@ export default Vue.extend({
   color: darken(#cfc0bd, 50%);
   background-color: white;
   text-align: center;
-  margin: 1rem;
   border-radius: 0.25rem;
   border: 0.0625rem solid rgba(0, 0, 0, 0.25);
   box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+
+  &--container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 1rem;
+  }
 
   &:after {
     content: '';
@@ -154,7 +184,6 @@ export default Vue.extend({
     justify-content: center;
     align-items: center;
     background-color: white;
-
     width: 1.5rem;
     height: 1.5rem;
     border-radius: 0.25rem;
