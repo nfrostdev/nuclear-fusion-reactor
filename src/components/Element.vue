@@ -30,7 +30,7 @@
         <font-awesome-icon icon="dollar-sign" />
       </div>
     </div>
-    <element-generator-progress :percent="generatorPercent" />
+    <element-generator-progress :percent="generatorPercent" :maxxed="generatorMaxxed" />
   </div>
 </template>
 
@@ -56,7 +56,8 @@ export default Vue.extend({
       converting: false,
       generatorInterval: 0,
       generatorPercent: 0,
-      generatorPercentInterval: 0
+      generatorPercentInterval: 0,
+      generatorMaxxed: false
     }
   },
   computed: {
@@ -86,6 +87,7 @@ export default Vue.extend({
         }, generationTime / 100)
       } else {
         this.generatorPercent = 100
+        this.generatorMaxxed = true
       }
     },
     disableGenerator() {
