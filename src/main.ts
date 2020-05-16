@@ -8,11 +8,13 @@ import {
   faWeightHanging,
   faBolt,
   faBan,
-  faDollarSign
+  faDollarSign,
+  faAngleRight,
+  faAngleDoubleRight
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
-library.add(faWeightHanging, faBolt, faBan, faDollarSign)
+library.add(faWeightHanging, faBolt, faBan, faDollarSign, faAngleRight, faAngleDoubleRight)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Vue.config.productionTip = false

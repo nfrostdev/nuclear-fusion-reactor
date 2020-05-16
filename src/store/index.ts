@@ -50,11 +50,21 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    addMoney(state, amount) {
-      state.money += amount
-    },
     addElement(state, [index, amount]) {
       state.elements[index].count += amount
+    },
+    sellElement(state, index) {
+      const element = state.elements[index]
+      state.money += element.number * element.weight * element.count
+      state.elements[index].count = 0
+    },
+    convertElement(state, index) {
+      const element = state.elements[index]
+      const nextElement = state.elements[index + 1]
+      if (nextElement && element.count >= nextElement.weight) {
+        state.elements[index].count -= nextElement.weight
+        state.elements[index + 1].count++
+      }
     }
   },
   actions: {},

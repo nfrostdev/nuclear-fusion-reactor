@@ -13,6 +13,31 @@
       </div>
 
       <div
+        class="element__convert element__action"
+        :title="'Convert ' + name"
+        @click="convertElement(index)"
+      >
+        <font-awesome-icon icon="angle-right"/>
+      </div>
+
+      <div
+        class="element__autoconvert element__action"
+        :title="'Automatically Convert ' + name"
+        :class="{ active: converting }"
+        @click="toggleAutoConversion()"
+      >
+        <font-awesome-icon icon="angle-double-right"/>
+      </div>
+
+      <div
+        class="element__sell element__action"
+        :title="'Sell ' + count + ' ' + name"
+        @click="sellElement(index)"
+      >
+        <font-awesome-icon icon="dollar-sign"/>
+      </div>
+
+      <div
         class="element__generate element__action"
         :class="{ active: generating }"
         :title="(generating ? 'Stop' : 'Start') + ' the ' + name + ' Generator'"
@@ -20,14 +45,6 @@
       >
         <font-awesome-icon v-if="generating" icon="ban"/>
         <font-awesome-icon v-else icon="bolt"/>
-      </div>
-
-      <div
-        class="element__sell element__action"
-        :title="'Sell ' + count + ' ' + name"
-        @click="sellElement"
-      >
-        <font-awesome-icon icon="dollar-sign"/>
       </div>
     </div>
     <element-generator-progress :percent="generatorPercent" :maxxed="generatorMaxxed"/>
@@ -54,11 +71,13 @@ export default Vue.extend({
   data() {
     return {
       generating: false,
-      converting: false,
       generatorInterval: 0,
       generatorPercent: 0,
       generatorPercentInterval: 0,
-      generatorMaxxed: false
+      generatorMaxxed: false,
+      generationTime: this.number * this.weight * 100,
+      converting: false,
+      convertingInterval: 0
     }
   },
   computed: {
@@ -73,26 +92,36 @@ export default Vue.extend({
   },
   methods: {
     ...mapMutations([
-      'addMoney',
-      'addElement'
+      'addElement',
+      'sellElement',
+      'convertElement'
     ]),
+    toggleAutoConversion() {
+      this.converting = !this.converting
+      if (this.convertingInterval) {
+        clearInterval(this.convertingInterval)
+        this.convertingInterval = 0
+      } else {
+        this.convertingInterval = setInterval(() => {
+          this.convertElement(this.index)
+        }, this.generationTime)
+      }
+    },
     toggleGenerator() {
       this.generating = !this.generating
       this.generating ? this.enableGenerator() : this.disableGenerator()
     },
     enableGenerator() {
-      const generationTime = this.number * this.weight * 100
-
       this.generatorInterval = setInterval(() => {
         this.addElement([this.index, 1])
-      }, generationTime)
+      }, this.generationTime)
 
-      if (generationTime / 100 > 1) {
+      if (this.generationTime / 100 > 1) {
         this.generatorPercentInterval = setInterval(() => {
           this.generatorPercent + 1 >= 100
             ? (this.generatorPercent = 0)
             : (this.generatorPercent += 1)
-        }, generationTime / 100)
+        }, this.generationTime / 100)
       } else {
         this.generatorPercent = 100
         this.generatorMaxxed = true
@@ -102,9 +131,6 @@ export default Vue.extend({
       clearInterval(this.generatorInterval)
       clearInterval(this.generatorPercentInterval)
       this.generatorPercent = 0
-    },
-    sellElement() {
-      this.addMoney(this.number * this.weight * this.count)
     }
   },
   mounted() {
@@ -187,6 +213,7 @@ export default Vue.extend({
     }
 
     &__action {
+      transition: all 0.25s ease;
       font-size: 75%;
       cursor: pointer;
       display: flex;
@@ -198,6 +225,7 @@ export default Vue.extend({
       border-radius: 0.25rem;
       border: 0.0625rem solid rgba(0, 0, 0, 0.25);
       box-shadow: 0 0.0625rem 0.25rem rgba(0, 0, 0, 0.1);
+      overflow: hidden;
     }
 
     &__generate {
@@ -212,6 +240,39 @@ export default Vue.extend({
     &__sell {
       left: 0.5rem;
       bottom: 0.5rem;
+    }
+
+    &__convert {
+      top: 3.25rem;
+      right: 0.5rem;
+    }
+
+    &__autoconvert {
+      bottom: 3.25rem;
+      right: 0.5rem;
+      padding-left: 0.125rem;
+
+      &.active {
+        color: #888;
+
+        &:after {
+          content: '';
+          position: absolute;
+          left:0.125rem;
+          width: 1rem;
+          height: 1rem;
+          border-radius: 4rem;
+          border: 0.0625rem solid transparent;
+          border-top-color: #888;
+          animation: spin infinite 1s linear;
+        }
+      }
+    }
+  }
+
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
     }
   }
 </style>
