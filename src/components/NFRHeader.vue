@@ -1,8 +1,8 @@
 <template>
   <header class="header">
     <h1>Nuclear Fusion Reactor</h1>
-    <div class="header--description">A game about elements.</div>
-    <div class="player--money">{{ $store.getters.money }}</div>
+    <div class="header__description">A game about elements.</div>
+    <div class="player__money">{{ $store.getters.money }}</div>
   </header>
 </template>
 
@@ -17,9 +17,8 @@ export default Vue.extend({})
   padding: 2rem;
   text-align: center;
   color: darken(#cfc0bd, 50%);
-  text-shadow: 0 0.125rem 0.125rem #cfc0bd;
 
-  &--description {
+  &__description {
     margin-top: 0.25rem;
   }
 }
@@ -30,7 +29,7 @@ h1 {
 }
 
 .player {
-  &--money {
+  &__money {
     margin-top: 2rem;
     font-size: 150%;
   }
