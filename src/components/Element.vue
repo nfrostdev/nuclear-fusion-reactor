@@ -13,6 +13,7 @@
       </div>
 
       <div
+        v-if="!isLastElement"
         class="element__convert element__action"
         :title="'Convert ' + name"
         @click="convertElement(index)"
@@ -21,6 +22,7 @@
       </div>
 
       <div
+        v-if="!isLastElement"
         class="element__autoconvert element__action"
         :title="'Automatically Convert ' + name"
         :class="{ active: converting }"
@@ -91,6 +93,9 @@ export default Vue.extend({
       return {
         backgroundColor: this.color
       }
+    },
+    isLastElement(): boolean {
+      return this.index + 1 === this.$store.state.elements.length
     }
   },
   methods: {
