@@ -1,5 +1,5 @@
 <template>
-  <div class="element__container">
+  <div class="element__container" v-if="unlocked">
     <div class="element" :style="styling">
       <div class="element__number" title="Atomic Number">{{ number }}</div>
       <div class="element__count" :title="'Total ' + name + ' Available'">
@@ -81,6 +81,9 @@ export default Vue.extend({
     }
   },
   computed: {
+    unlocked(): number {
+      return this.$store.state.elements[this.index].unlocked
+    },
     count(): number {
       return this.$store.state.elements[this.index].count
     },
@@ -258,7 +261,7 @@ export default Vue.extend({
         &:after {
           content: '';
           position: absolute;
-          left:0.125rem;
+          left: 0.125rem;
           width: 1rem;
           height: 1rem;
           border-radius: 4rem;

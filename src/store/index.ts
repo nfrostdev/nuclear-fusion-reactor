@@ -8,6 +8,7 @@ export default new Vuex.Store({
     money: 0,
     elements: [
       {
+        unlocked: true,
         number: 1,
         symbol: 'H',
         name: 'Hydrogen',
@@ -16,6 +17,7 @@ export default new Vuex.Store({
         count: 0
       },
       {
+        unlocked: false,
         number: 2,
         symbol: 'He',
         name: 'Helium',
@@ -24,6 +26,7 @@ export default new Vuex.Store({
         count: 0
       },
       {
+        unlocked: false,
         number: 3,
         symbol: 'Li',
         name: 'Lithium',
@@ -32,6 +35,7 @@ export default new Vuex.Store({
         count: 0
       },
       {
+        unlocked: false,
         number: 4,
         symbol: 'Be',
         name: 'Beryllium',
@@ -55,7 +59,7 @@ export default new Vuex.Store({
     },
     sellElement(state, index) {
       const element = state.elements[index]
-      state.money += element.number * element.weight * element.count
+      state.money += element.number * element.weight * element.count * 0.01
       state.elements[index].count = 0
     },
     convertElement(state, index) {
@@ -64,6 +68,9 @@ export default new Vuex.Store({
       if (nextElement && element.count >= nextElement.weight) {
         state.elements[index].count -= nextElement.weight
         state.elements[index + 1].count++
+        if (!nextElement.unlocked) {
+          state.elements[index + 1].unlocked = true
+        }
       }
     }
   },
