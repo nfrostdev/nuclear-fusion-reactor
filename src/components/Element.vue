@@ -17,6 +17,7 @@
         class="element__convert element__action"
         :title="'Convert ' + name"
         @click="convertElement(index)"
+        :class="{disabled: !canConvert || converting}"
       >
         <font-awesome-icon icon="angle-right"/>
       </div>
@@ -25,7 +26,7 @@
         v-if="!isLastElement"
         class="element__autoconvert element__action"
         :title="'Automatically Convert ' + name"
-        :class="{ active: converting }"
+        :class="{ active: converting, disabled: !canConvert && !converting }"
         @click="toggleAutoConversion()"
       >
         <font-awesome-icon icon="angle-double-right"/>
@@ -93,6 +94,9 @@ export default Vue.extend({
       return {
         backgroundColor: this.color
       }
+    },
+    canConvert(): boolean {
+      return this.count >= this.$store.state.elements[this.index + 1].weight
     },
     isLastElement(): boolean {
       return this.index + 1 === this.$store.state.elements.length
@@ -282,5 +286,10 @@ export default Vue.extend({
     100% {
       transform: rotate(360deg);
     }
+  }
+
+  .disabled {
+    pointer-events: none;
+    opacity: 0.5;
   }
 </style>
