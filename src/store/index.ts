@@ -1,49 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import elements from '@/assets/elements'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
     money: 0,
-    elements: [
-      {
-        unlocked: true,
-        number: 1,
-        symbol: 'H',
-        name: 'Hydrogen',
-        weight: 1,
-        color: '#fafafa',
-        count: 0
-      },
-      {
-        unlocked: false,
-        number: 2,
-        symbol: 'He',
-        name: 'Helium',
-        weight: 4,
-        color: '#d9ffff',
-        count: 0
-      },
-      {
-        unlocked: false,
-        number: 3,
-        symbol: 'Li',
-        name: 'Lithium',
-        weight: 7,
-        color: '#cc80ff',
-        count: 0
-      },
-      {
-        unlocked: false,
-        number: 4,
-        symbol: 'Be',
-        name: 'Beryllium',
-        weight: 9,
-        color: '#c2ff00',
-        count: 0
-      }
-    ]
+    elements: elements
   },
   getters: {
     money: state => {

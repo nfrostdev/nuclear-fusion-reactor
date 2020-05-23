@@ -116,7 +116,12 @@ export default Vue.extend({
       } else {
         this.convertingInterval = setInterval(() => {
           this.convertElement(this.index)
-        }, this.generationTime)
+        }, 250)
+      }
+    },
+    buyGenerator() {
+      if (this.$store.getters.money >= this.number * this.weight) {
+        console.log('Could have purchased.')
       }
     },
     toggleGenerator() {
