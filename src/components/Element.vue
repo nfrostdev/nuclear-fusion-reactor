@@ -1,21 +1,21 @@
 <template>
-  <div class="element__container" v-if="unlocked">
+  <div class="element__container" v-if="element.unlocked">
     <div class="element" :style="styling">
-      <div class="element__number" title="Atomic Number">{{ number }}</div>
-      <div class="element__count" :title="'Total ' + name + ' Available'">
-        {{ count }}
+      <div class="element__number" title="Atomic Number">{{ element.number }}</div>
+      <div class="element__count" :title="'Total ' + element.name + ' Available'">
+        {{ element.count }}
       </div>
-      <div class="element__symbol" title="Atomic Symbol">{{ symbol }}</div>
-      <div class="element__name" title="Atomic Name">{{ name }}</div>
+      <div class="element__symbol" title="Atomic Symbol">{{ element.symbol }}</div>
+      <div class="element__name" title="Atomic Name">{{ element.name }}</div>
       <div class="element__weight" title="Atomic Weight">
-        <span>{{ weight }}</span>
+        <span>{{ element.weight }}</span>
         <font-awesome-icon class="icon" icon="weight-hanging"/>
       </div>
 
       <div
         v-if="!isLastElement"
         class="element__convert element__action"
-        :title="'Convert ' + name"
+        :title="'Convert ' + element.name"
         @click="convertElement(index)"
         :class="{disabled: !canConvert || converting}"
       >
@@ -25,7 +25,7 @@
       <div
         v-if="!isLastElement"
         class="element__autoconvert element__action"
-        :title="'Automatically Convert ' + name"
+        :title="'Automatically Convert ' + element.name"
         :class="{ active: converting, disabled: !canConvert && !converting }"
         @click="toggleAutoConversion()"
       >
@@ -34,17 +34,26 @@
 
       <div
         class="element__sell element__action"
-        :title="'Sell ' + count + ' ' + name"
+        :title="'Sell ' + count + ' ' + element.name"
         @click="sellElement(index)"
       >
         <font-awesome-icon icon="dollar-sign"/>
       </div>
-
       <div
+        v-if="element.generatorPurchased"
         class="element__generate element__action"
         :class="{ active: generating }"
-        :title="(generating ? 'Stop' : 'Start') + ' the ' + name + ' Generator'"
+        :title="(generating ? 'Stop' : 'Start') + ' the ' + element.name + ' Generator'"
         @click="toggleGenerator"
+      >
+        <font-awesome-icon v-if="generating" icon="ban"/>
+        <font-awesome-icon v-else icon="bolt"/>
+      </div>
+      <div
+        v-else
+        class="element__generate element__action"
+        :title="'Purchase a ' + element.name + ' Generator for $' + element.number * element.weight"
+        @click="buyGenerator"
       >
         <font-awesome-icon v-if="generating" icon="ban"/>
         <font-awesome-icon v-else icon="bolt"/>
@@ -57,6 +66,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import ElementGeneratorProgress from './ElementGeneratorProgress.vue'
+import Element from '@/classes/Element'
 import { mapMutations } from 'vuex'
 
 export default Vue.extend({
@@ -65,11 +75,7 @@ export default Vue.extend({
   },
   props: {
     index: Number,
-    number: Number,
-    symbol: String,
-    name: String,
-    weight: Number,
-    color: String
+    element: Element
   },
   data() {
     return {
@@ -78,7 +84,7 @@ export default Vue.extend({
       generatorPercent: 0,
       generatorPercentInterval: 0,
       generatorMaxxed: false,
-      generationTime: this.number * this.weight * 100,
+      generationTime: this.element.number * this.element.weight * 100,
       converting: false,
       convertingInterval: 0
     }
@@ -92,7 +98,7 @@ export default Vue.extend({
     },
     styling(): object {
       return {
-        backgroundColor: this.color
+        backgroundColor: this.element.color
       }
     },
     canConvert(): boolean {
@@ -106,7 +112,8 @@ export default Vue.extend({
     ...mapMutations([
       'addElement',
       'sellElement',
-      'convertElement'
+      'convertElement',
+      'spendMoney'
     ]),
     toggleAutoConversion() {
       this.converting = !this.converting
@@ -120,8 +127,9 @@ export default Vue.extend({
       }
     },
     buyGenerator() {
-      if (this.$store.getters.money >= this.number * this.weight) {
-        console.log('Could have purchased.')
+      if (this.$store.state.money >= this.element.number * this.element.weight) {
+        this.spendMoney(this.element.number * this.element.weight)
+        this.element.purchaseGenerator()
       }
     },
     toggleGenerator() {

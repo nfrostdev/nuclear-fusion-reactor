@@ -5,11 +5,7 @@
       <Element v-for="(element, index) in $store.state.elements"
                :key="element.number"
                :index="index"
-               :number="element.number"
-               :symbol="element.symbol"
-               :name="element.name"
-               :weight="element.weight"
-               :color="element.color"
+               :element="element"
       />
     </main>
   </div>

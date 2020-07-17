@@ -1,4 +1,4 @@
-import Element from '@/models/Element'
+import Element from '@/classes/Element'
 
 const elements: Array<Element> = [
   new Element(1, 'H', 'Hydrogen', 1, '#fafafa'),

@@ -15,8 +15,16 @@ export default class Element {
     this.weight = weight
     this.color = color
     this.count = 0
-    this.generatorPurchased = false
-    // This element will be unlocked by default if it is the first one.
+    // The first element will be unlocked and have a generator.
+    this.generatorPurchased = this.number === 1
     this.unlocked = this.number === 1
+  }
+
+  purchaseGenerator() {
+    this.generatorPurchased = true
+  }
+
+  unlock() {
+    this.unlocked = true
   }
 }

@@ -36,6 +36,9 @@ export default new Vuex.Store({
           state.elements[index + 1].unlocked = true
         }
       }
+    },
+    spendMoney(state, amount) {
+      state.money -= amount
     }
   },
   actions: {},
